@@ -1,0 +1,44 @@
+import passwords
+import MySQLdb
+
+class GAEPage(webapp2.RequestHandler):
+        def get(self):
+                self.response.headers["Content-Type"] = "text/html"
+		conn = MySQLdb.connect(unix_socket = "/cloudsql/electric-folio-258117:us-central1:l2",
+                        user   = passwords.SQL_USER,
+                        passwd = passwords.SQL_PASSWD,
+                        db     = "db")
+		cursor.execute("SELECT * FROM Persons;")
+		results = cursor.fetchall()
+		cursor.close()
+
+
+		self.response.write( "<html>")
+		self.response.write( "<head>")
+		self.response.write( "<title>First GAE DB Script</title>")
+		self.response.write( "</head>")
+		self.response.write( "<body>")
+		self.response.write( "<h2>Hello</h2>")
+
+		self.response.write("<table style='width:100%'> ")
+		self.response.write("<tr><th>PersonID</th><th>Name</th></tr>")
+		for rec in results:
+        		self.response.write("<tr>")
+        		for r in rec:
+                		self.response.write("<td>", r, "</td>")
+        		self.response.write("</tr>")
+		self.response.write("</table>")
+
+		conn.commit()
+		conn.close()
+
+
+		self.response.write("</body>")
+		self.response.write("</html>")
+
+app = webapp2.WSGIApplication([
+    ("/", GAEPage),
+], debug=True)
+
+
+
